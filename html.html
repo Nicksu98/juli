@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sorpresa para Ti</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animación de corazones flotantes */
+    .floating-hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .heart {
+      position: fixed;
+      font-size: 20px;
+      opacity: 0.2;
+      animation: float-heart 15s linear infinite;
+    }
+
+    @keyframes float-heart {
+      0% {
+        transform: translateY(100vh) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-100px) translateX(100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    .title {
+      font-size: clamp(20px, 6vw, 24px);
+      color: #e63946;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      animation: pulse 1.5s infinite;
+      padding: 0 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      font-size: clamp(16px, 4vw, 18px);
+      color: #fff;
+      background-color: #e63946;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      box-shadow: 0 2px 8px rgba(230, 57, 70, 0.3);
+    }
+
+    .button:active {
+      transform: scale(0.98);
+      background-color: #d62828;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .slide {
+      background-color: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .slide img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .slide-content {
+      padding: 20px 16px;
+      position: relative;
+    }
+
+    .slide-title {
+      font-size: clamp(18px, 5vw, 20px);
+      margin-bottom: 12px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .slide-title .heart-icon {
+      color: #e63946;
+      animation: pulse 1.5s infinite;
+    }
+
+    .slide-text {
+      font-size: clamp(14px, 4vw, 16px);
+      color: #666;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-buttons button {
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #e63946;
+      padding: 8px 16px;
+      transition: all 0.2s ease;
+      border-radius: 8px;
+    }
+
+    .nav-buttons button:active {
+      background-color: rgba(230, 57, 70, 0.1);
+    }
+
+    .nav-buttons button:disabled {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* Nuevos estilos para el cuadro de confirmación */
+    .confirmation-box {
+      margin-top: 20px;
+      text-align: center;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .confirmation-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .confirmation-button {
+      padding: 12px 32px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .yes-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .no-button {
+      background-color: #e63946;
+      color: white;
+    }
+
+    .confirmation-button:active {
+      transform: scale(0.98);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.98); opacity: 0.8; }
+    }
+
+    @media (max-width: 350px) {
+      .container { padding: 10px; }
+      .slide-content { padding: 16px 12px; }
+      .nav-buttons { padding: 8px 12px; }
+    }
+  </style>
+</head>
+<body>
+<!-- Contenedor de corazones flotantes -->
+<div class="floating-hearts"></div>
+
+<div class="container">
+  <div id="intro">
+    <div class="title">🖤 Para mi amorcito 🖤</div>
+    <button class="button" id="reveal-button">Toca para descubrir tu sorpresa</button>
+  </div>
+
+  <div id="slides" class="hidden">
+    <div id="slide" class="slide">
+      <img id="slide-image" alt="Momento especial" loading="lazy">
+      <div class="slide-content">
+        <h2 id="slide-title" class="slide-title"></h2>
+        <p id="slide-text" class="slide-text"></p>
+      </div>
+      <div class="nav-buttons">
+        <button id="prev-button" aria-label="Anterior">◀</button>
+        <button id="next-button" aria-label="Siguiente">▶</button>
+      </div>
+    </div>
+    
+    <!-- Nuevo cuadro de confirmación -->
+    <div id="confirmation-box" class="confirmation-box hidden">
+      <h2 class="slide-title">¿Aceptas? 🖤</h2>
+      <div class="confirmation-buttons">
+        <button class="confirmation-button yes-button" id="yes-button">Sí</button>
+        <button class="confirmation-button no-button" id="no-button">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const steps = [
+    {
+      title: "♥ Mi chiquita... ♥",
+      text: "Quiero sorprenderte con algo especial porque te mereces un millon de cosas 🖤",
+      image: "https://i.ibb.co/gt84HwW/Imagen-de-Whats-App-2024-11-07-a-las-19-18-44-a6a1050b.jpg",
+      bgColor: "#fde8e8"
+    },
+    {
+      title: "Una noche mágica ♥",
+      text: "Te invito a compartir un momento único juntos en un lugar especial 🖤 (con quedada a dormir)",
+      image: "https://i.ibb.co/0Mqvvsn/Imagen-de-Whats-App-2024-11-07-a-las-19-18-44-161c252e.jpg", 
+      bgColor: "#ebf4ff"
+    },
+    {
+      title: "♥ Cena romántica ♥",
+      text: "Disfrutaremos de una deliciosa cena, solo tú y yo ♥ (Ponte algo lindo jiji).",
+      image: "https://i.ibb.co/pRqB3Zt/Imagen-de-Whats-App-2024-11-07-a-las-19-18-44-c9c319ef.jpg",
+      bgColor: "#f3e8ff"
+    },
+    {
+      title: "9 de Noviembre ♥",
+      text: "¿Si quieres pasar este día conmigo y crear un recuerdo hermoso juntos? 🖤",
+      image: "https://i.ibb.co/tqgwR4g/Imagen-de-Whats-App-2024-11-07-a-las-19-22-10-cb9fefaa.jpg",
+      bgColor: "#e3e8ff"
+    },
+    {
+      title: "♥ Gracias por ser tú ♥",
+      text: "Eres lo mas hermoso que tengo y quiero crear más recuerdos junto a ti, te amo con todo mi corazón 🖤",
+      image: "https://i.ibb.co/m6Y3w9T/Imagen-de-Whats-App-2024-11-07-a-las-19-18-44-ec680a13.jpg",
+      bgColor: "#ffe8f3"
+    }
+  ];
+
+  // Crear corazones flotantes
+  function createFloatingHearts() {
+    const heartsContainer = document.querySelector('.floating-hearts');
+    const numberOfHearts = 15;
+    const hearts = ['♥', '🖤', '♡'];
+
+    for (let i = 0; i < numberOfHearts; i++) {
+      const heart = document.createElement('span');
+      heart.className = 'heart';
+      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDelay = Math.random() * 15 + 's';
+      heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+      heartsContainer.appendChild(heart);
+    }
+  }
+
+  // Llamar a la función cuando se carga la página
+  createFloatingHearts();
+
+  let currentStep = 0;
+
+  // Precargar imágenes
+  window.addEventListener('load', () => {
+    steps.forEach(step => {
+      const img = new Image();
+      img.src = step.image;
+    });
+  });
+
+  // Event Listeners
+  document.getElementById('reveal-button').addEventListener('click', reveal);
+  document.getElementById('prev-button').addEventListener('click', prevStep);
+  document.getElementById('next-button').addEventListener('click', nextStep);
+  
+  // Nuevos event listeners para los botones de confirmación
+  document.getElementById('yes-button').addEventListener('click', () => {
+    alert('¡Sabia que no lo ibas a rechazar. Te amo! 🖤');
+  });
+  
+  document.getElementById('no-button').addEventListener('click', () => {
+    alert('Me duele que hayas puesto este boton, por lo tanto me debes unos nudes 💔');
+  });
+
+  function reveal() {
+    document.getElementById("intro").classList.add("hidden");
+    document.getElementById("slides").classList.remove("hidden");
+    updateSlide();
+  }
+
+  function updateSlide() {
+    const step = steps[currentStep];
+    const slideImage = document.getElementById("slide-image");
+    const slideElement = document.getElementById("slide");
+    const confirmationBox = document.getElementById("confirmation-box");
+    
+    slideElement.style.opacity = '0';
+    setTimeout(() => {
+      slideImage.src = step.image;
+      document.getElementById("slide-title").textContent = step.title;
+      document.getElementById("slide-text").textContent = step.text;
+      document.getElementById("prev-button").disabled = currentStep === 0;
+      document.getElementById("next-button").disabled = currentStep === steps.length - 1;
+      slideElement.style.backgroundColor = step.bgColor;
+      slideElement.style.opacity = '1';
+      
+      // Mostrar el cuadro de confirmación en el último paso
+      if (currentStep === steps.length - 1) {
+        confirmationBox.classList.remove('hidden');
+      } else {
+        confirmationBox.classList.add('hidden');
+      }
+    }, 200);
+  }
+
+  function nextStep() {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      updateSlide();
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      updateSlide();
+    }
+  }
+
+  // Soporte para gestos de deslizamiento
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const slider = document.getElementById('slides');
+
+  slider.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  slider.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, { passive: true });
+
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    const swipeLength = touchEndX - touchStartX;
+    
+    if (Math.abs(swipeLength) > swipeThreshold) {
+      if (swipeLength > 0 && currentStep > 0) {
+        prevStep();
+      } else if (swipeLength < 0 && currentStep < steps.length - 1) {
+        nextStep();
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
